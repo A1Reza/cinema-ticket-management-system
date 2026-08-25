@@ -83,4 +83,15 @@ public final class HibernateUtil {
             entityManager.close();
         }
     }
+
+    public <T> T execute(Function<EntityManager, T> action) {
+
+        EntityManager entityManager = getEntityManager();
+
+        try {
+            return action.apply(entityManager);
+        } finally {
+            entityManager.close();
+        }
+    }
 }

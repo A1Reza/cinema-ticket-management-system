@@ -1,7 +1,6 @@
 package ir.reza.cinema.repository.base;
 
 import ir.reza.cinema.util.HibernateUtil;
-import jakarta.persistence.EntityManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,35 +36,24 @@ public abstract class BaseRepositoryImpl<T, ID>
     @Override
     public Optional<T> findById(ID id) {
 
-        EntityManager entityManager =
-                hibernateUtil.getEntityManager();
-
-        try {
-            return Optional.ofNullable(
-                    entityManager.find(getEntityClass(), id)
-            );
-        } finally {
-            entityManager.close();
-        }
+        return hibernateUtil.execute(entityManager ->
+                Optional.ofNullable(
+                        entityManager.find(getEntityClass(), id)
+                )
+        );
     }
 
     @Override
     public List<T> findAll() {
 
-        EntityManager entityManager =
-                hibernateUtil.getEntityManager();
-
-        try {
-            return entityManager.createQuery(
-                    "SELECT e FROM "
-                            + getEntityClass().getSimpleName()
-                            + " e",
-                    getEntityClass()
-            ).getResultList();
-
-        } finally {
-            entityManager.close();
-        }
+        return hibernateUtil.execute(entityManager ->
+                entityManager.createQuery(
+                        "SELECT e FROM "
+                                + getEntityClass().getSimpleName()
+                                + " e",
+                        getEntityClass()
+                ).getResultList()
+        );
     }
 
     @Override
@@ -90,8 +78,21 @@ public abstract class BaseRepositoryImpl<T, ID>
     @Override
     public void delete(T entity) {
 
-        hibernateUtil.executeInTransaction(entityManager ->
-                entityManager.remove(entity)
-        );
+        hibernateUtil.executeInTransaction(entityManager -> {
+
+            T managedEntity = entityManager.find(
+                    getEntityClass(),
+                    getEntityId(entity)
+            );
+
+            if (managedEntity == null) {
+                throw new IllegalArgumentException(
+                        "Entity not found with id: "
+                                + getEntityId(entity)
+                );
+            }
+
+            entityManager.remove(managedEntity);
+        });
     }
 }
