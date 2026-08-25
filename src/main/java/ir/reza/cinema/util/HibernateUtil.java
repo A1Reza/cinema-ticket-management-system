@@ -33,7 +33,6 @@ public final class HibernateUtil {
         return entityManagerFactory.createEntityManager();
     }
 
-    //Transaction Helper
     public void executeInTransaction(Consumer<EntityManager> action) {
 
         EntityManager entityManager = getEntityManager();
@@ -58,7 +57,8 @@ public final class HibernateUtil {
         }
     }
 
-    public <T> T executeInTransaction(Function<EntityManager, T> action) {
+    public <T> T executeInTransactionWithResult(
+            Function<EntityManager, T> action) {
 
         EntityManager entityManager = getEntityManager();
 
