@@ -238,11 +238,7 @@ public class Main {
                 );
 
         TicketHandler ticketCreationHandler =
-                new TicketCreationHandler(
-                        movieRepository,
-                        customerRepository,
-                        ticketRepository
-                );
+                new TicketCreationHandler();
 
 
         movieAvailabilityHandler.setNext(
