@@ -2,6 +2,9 @@ package ir.reza.cinema.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "movies")
 @NamedQuery(
@@ -24,10 +27,17 @@ public class Movie {
     @Column(nullable = false)
     private MovieStatus status;
 
+    @OneToMany(mappedBy = "movie")
+    private List<Ticket> tickets = new ArrayList<>();
+
     public Movie() {
     }
 
-    public Movie(String title, Double price, MovieStatus status) {
+    public Movie(
+            String title,
+            Double price,
+            MovieStatus status
+    ) {
         this.title = title;
         this.price = price;
         this.status = status;
@@ -59,6 +69,20 @@ public class Movie {
 
     public void setStatus(MovieStatus status) {
         this.status = status;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void addTicket(Ticket ticket) {
+        tickets.add(ticket);
+        ticket.setMovie(this);
+    }
+
+    public void removeTicket(Ticket ticket) {
+        tickets.remove(ticket);
+        ticket.setMovie(null);
     }
 
     @Override

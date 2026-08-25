@@ -26,7 +26,11 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(LocalDateTime purchaseDate, Customer customer, Movie movie) {
+    public Ticket(
+            LocalDateTime purchaseDate,
+            Customer customer,
+            Movie movie
+    ) {
         this.purchaseDate = purchaseDate;
         this.customer = customer;
         this.movie = movie;
