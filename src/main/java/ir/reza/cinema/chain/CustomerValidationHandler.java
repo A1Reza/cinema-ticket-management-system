@@ -1,8 +1,7 @@
 package ir.reza.cinema.chain;
 
-import ir.reza.cinema.entity.Customer;
-import ir.reza.cinema.entity.Ticket;
 import ir.reza.cinema.repository.customer.CustomerRepository;
+import ir.reza.cinema.entity.Ticket;
 
 public class CustomerValidationHandler implements TicketHandler {
 
@@ -24,7 +23,7 @@ public class CustomerValidationHandler implements TicketHandler {
     @Override
     public Ticket handle(TicketRequest request) {
 
-        Customer customer = customerRepository
+        customerRepository
                 .findById(request.getCustomerId())
                 .orElseThrow(() ->
                         new IllegalArgumentException(
