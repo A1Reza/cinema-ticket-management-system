@@ -61,18 +61,29 @@ public abstract class BaseRepositoryImpl<T, ID>
 
         ID id = getEntityId(entity);
 
-        T existingEntity = findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
+        return hibernateUtil.executeInTransactionWithResult(
+                entityManager -> {
+
+                    T existingEntity =
+                            entityManager.find(
+                                    getEntityClass(),
+                                    id
+                            );
+
+                    if (existingEntity == null) {
+                        throw new IllegalArgumentException(
                                 "Entity not found with id: " + id
-                        )
-                );
+                        );
+                    }
 
-        hibernateUtil.executeInTransaction(entityManager ->
-                updateFields(existingEntity, entity)
+                    updateFields(
+                            existingEntity,
+                            entity
+                    );
+
+                    return existingEntity;
+                }
         );
-
-        return existingEntity;
     }
 
     @Override
